@@ -4,10 +4,8 @@ pub fn inverse_captcha_part_one(captcha: &[u8]) -> Result<u64, &'static str> {
     captcha_shift[0] = captcha[captcha.len() - 1];
     captcha_shift[1..captcha.len()].copy_from_slice(&captcha[0..captcha.len() - 1]);
     let mut sum: u64 = 0;
-    for (x, y) in captcha.iter().zip(captcha_shift.iter()) {
-        if x == y {
-            sum += ascii_to_digit(*x)?;
-        }
+    for (x, _) in captcha.iter().zip(captcha_shift.iter()).filter(|&(x, y)| x == y) {
+        sum += ascii_to_digit(*x)?;
     }
     Ok(sum)
 }
@@ -18,10 +16,8 @@ pub fn inverse_captcha_part_two(captcha: &[u8]) -> Result<u64, &'static str> {
     captcha_shift[0..captcha.len()/2].copy_from_slice(&captcha[captcha.len()/2..captcha.len()]);
     captcha_shift[captcha.len()/2..captcha.len()].copy_from_slice(&captcha[0..captcha.len()/2]);
     let mut sum: u64 = 0;
-    for (x, y) in captcha.iter().zip(captcha_shift.iter()) {
-        if x == y {
-            sum += ascii_to_digit(*x)?;
-        }
+    for (x, _) in captcha.iter().zip(captcha_shift.iter()).filter(|&(x, y)| x == y) {
+        sum += ascii_to_digit(*x)?;
     }
     Ok(sum)
 }
