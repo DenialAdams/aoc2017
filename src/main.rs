@@ -83,7 +83,7 @@ pub fn corruption_checksum_part_two(spreadsheet: &str) -> Result<u64, ::std::num
         'outer: for (x, y) in nums.iter().tuple_combinations() {
             if x % y == 0 {
                 sum += x / y;
-                break 'outer;           
+                break 'outer;
             } else if y % x == 0 {
                 sum += y / x;
                 break 'outer;
