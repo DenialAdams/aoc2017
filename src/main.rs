@@ -23,6 +23,52 @@ fn main() {
     );
     println!("{}", spiral_memory_part_one(265149));
     println!("{}", spiral_memory_part_two(265149));
+    println!(
+        "{:?}",
+        high_entropy_passphrases_part_one(include_str!("day4.in").trim_right())
+    );
+    println!(
+        "{:?}",
+        high_entropy_passphrases_part_two(include_str!("day4.in").trim_right())
+    );
+}
+
+pub fn high_entropy_passphrases_part_one(input: &str) -> u64 {
+    let mut sum = 0;
+    for line in input.lines() {
+        let mut add = true;
+        for (x, y) in line.split_whitespace().tuple_combinations() {
+            if x == y {
+                add = false;
+                break;
+            }
+        }
+        if add {
+            sum += 1;
+        }
+    }
+    sum
+}
+
+pub fn high_entropy_passphrases_part_two(input: &str) -> u64 {
+    let mut sum = 0;
+    for line in input.lines() {
+        let mut add = true;
+        for (x, y) in line.split_whitespace().tuple_combinations() {
+            let mut x_chars: Vec<u8> = x.bytes().collect();
+            x_chars.sort_unstable();
+            let mut y_chars: Vec<u8> = y.bytes().collect();
+            y_chars.sort_unstable();
+            if x_chars == y_chars {
+                add = false;
+                break;
+            }
+        }
+        if add {
+            sum += 1;
+        }
+    }
+    sum
 }
 
 pub fn inverse_captcha_part_one(captcha: &[u8]) -> Result<u64, &'static str> {
