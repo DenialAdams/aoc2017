@@ -173,13 +173,15 @@ fn spiral_memory_part_two(num: u64) -> u64 {
     grid[CENTER][CENTER] = 1;
     let mut n = 1;
     let mut i = CENTER;
-    let mut j = CENTER+1;
+    let mut j = CENTER + 1;
     let mut sum_surroundings = 0;
     while true {
         // UP N, UP N
-        for _ in 0..(n*2)-1 {
+        for _ in 0..(n * 2) - 1 {
             sum_surroundings = {
-                grid[i-1][j] + grid[i-1][j-1] + grid[i-1][j+1] + grid[i][j+1] + grid[i][j-1] + grid[i+1][j+1] + grid[i+1][j] + grid[i+1][j-1]
+                grid[i - 1][j] + grid[i - 1][j - 1] + grid[i - 1][j + 1] + grid[i][j + 1]
+                    + grid[i][j - 1] + grid[i + 1][j + 1] + grid[i + 1][j]
+                    + grid[i + 1][j - 1]
             };
             if sum_surroundings > num {
                 return sum_surroundings;
@@ -188,9 +190,11 @@ fn spiral_memory_part_two(num: u64) -> u64 {
             i -= 1;
         }
         // LEFT N, LEFT N
-        for _ in 0..(n*2) {
+        for _ in 0..(n * 2) {
             sum_surroundings = {
-                grid[i-1][j] + grid[i-1][j-1] + grid[i-1][j+1] + grid[i][j+1] + grid[i][j-1] + grid[i+1][j+1] + grid[i+1][j] + grid[i+1][j-1]
+                grid[i - 1][j] + grid[i - 1][j - 1] + grid[i - 1][j + 1] + grid[i][j + 1]
+                    + grid[i][j - 1] + grid[i + 1][j + 1] + grid[i + 1][j]
+                    + grid[i + 1][j - 1]
             };
             if sum_surroundings > num {
                 return sum_surroundings;
@@ -199,9 +203,11 @@ fn spiral_memory_part_two(num: u64) -> u64 {
             j -= 1;
         }
         // DOWN N, DOWN N
-        for _ in 0..(n*2) {
+        for _ in 0..(n * 2) {
             sum_surroundings = {
-                grid[i-1][j] + grid[i-1][j-1] + grid[i-1][j+1] + grid[i][j+1] + grid[i][j-1] + grid[i+1][j+1] + grid[i+1][j] + grid[i+1][j-1]
+                grid[i - 1][j] + grid[i - 1][j - 1] + grid[i - 1][j + 1] + grid[i][j + 1]
+                    + grid[i][j - 1] + grid[i + 1][j + 1] + grid[i + 1][j]
+                    + grid[i + 1][j - 1]
             };
             if sum_surroundings > num {
                 return sum_surroundings;
@@ -210,9 +216,11 @@ fn spiral_memory_part_two(num: u64) -> u64 {
             i += 1;
         }
         // RIGHT N, RIGHT N
-        for _ in 0..(n*2)+1 {
+        for _ in 0..(n * 2) + 1 {
             sum_surroundings = {
-                grid[i-1][j] + grid[i-1][j-1] + grid[i-1][j+1] + grid[i][j+1] + grid[i][j-1] + grid[i+1][j+1] + grid[i+1][j] + grid[i+1][j-1]
+                grid[i - 1][j] + grid[i - 1][j - 1] + grid[i - 1][j + 1] + grid[i][j + 1]
+                    + grid[i][j - 1] + grid[i + 1][j + 1] + grid[i + 1][j]
+                    + grid[i + 1][j - 1]
             };
             if sum_surroundings > num {
                 return sum_surroundings;
