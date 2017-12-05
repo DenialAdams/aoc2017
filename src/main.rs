@@ -31,6 +31,56 @@ fn main() {
         "{:?}",
         high_entropy_passphrases_part_two(include_str!("day4.in").trim_right())
     );
+    println!(
+        "{:?}",
+        maze_twisty_trampolines_part_one(include_str!("day5.in").trim_right())
+    );
+    println!(
+        "{:?}",
+        maze_twisty_trampolines_part_two(include_str!("day5.in").trim_right())
+    );
+}
+
+pub fn maze_twisty_trampolines_part_one(input: &str) -> i64 {
+    let mut list: Vec<i64> = Vec::new();
+    for line in input.lines() {
+        list.push(line.parse().expect("Failed to parse input"))
+    }
+    let mut index: i64 = 0;
+    let mut steps = 0;
+    loop {
+        if index >= list.len() as i64 || index < 0 {
+            break;
+        }
+        let val = list[index as usize];
+        list[index as usize] += 1;
+        index += val;
+        steps += 1;
+    }
+    steps
+}
+
+pub fn maze_twisty_trampolines_part_two(input: &str) -> i64 {
+    let mut list: Vec<i64> = Vec::new();
+    for line in input.lines() {
+        list.push(line.parse().expect("Failed to parse input"))
+    }
+    let mut index: i64 = 0;
+    let mut steps = 0;
+    loop {
+        if index >= list.len() as i64 || index < 0 {
+            break;
+        }
+        let val = list[index as usize];
+        if val >= 3 {
+            list[index as usize] -= 1;
+        } else {
+            list[index as usize] += 1;
+        }
+        index += val;
+        steps += 1;
+    }
+    steps
 }
 
 pub fn high_entropy_passphrases_part_one(input: &str) -> u64 {
@@ -293,5 +343,25 @@ mod tests {
         assert_eq!(spiral_memory_part_one(22), 3);
         assert_eq!(spiral_memory_part_one(23), 2);
         assert_eq!(spiral_memory_part_one(1024), 31);
+    }
+
+    #[test]
+    fn test_maze_twisty_trampolines_part_one() {
+        let inp = "0
+3
+0
+1
+-3";
+        assert_eq!(maze_twisty_trampolines_part_one(inp), 5);
+    }
+
+    #[test]
+    fn test_maze_twisty_trampolines_part_two() {
+        let inp = "0
+3
+0
+1
+-3";
+        assert_eq!(maze_twisty_trampolines_part_two(inp), 10);
     }
 }
