@@ -3,6 +3,8 @@
 extern crate itertools;
 
 use itertools::Itertools;
+use std::collections::HashSet;
+use std::collections::HashMap;
 
 fn main() {
     println!(
@@ -39,6 +41,101 @@ fn main() {
         "{:?}",
         maze_twisty_trampolines_part_two(include_str!("day5.in").trim_right())
     );
+    println!(   
+        "{:?}",
+        memory_reallocation_part_one(include_str!("day6.in").trim_right())
+    );
+    println!(   
+        "{:?}",
+        memory_reallocation_part_two(include_str!("day6.in").trim_right())
+    );
+}
+
+pub fn memory_reallocation_part_one(input: &str) -> i64 {
+    let mut items: Vec<u64> = Vec::new();
+    let mut biggest_val = 0;
+    let mut index_big_val = 0;
+    for (index, item) in input.split_whitespace().enumerate() {
+        let val = item.parse().expect("Failed to parse input");
+        if val > biggest_val {
+            biggest_val = val;
+            index_big_val = index;
+        }
+        items.push(val);
+    }
+    let mut position_table = HashSet::new();
+    position_table.insert(items.clone());
+    let mut cycles = 0;
+    loop {
+        let mut spread = items[index_big_val];
+        items[index_big_val] = 0;
+        let mut index = index_big_val + 1;
+        while spread > 0 {
+            if index >= items.len() {
+                index = 0;
+            }
+            items[index] += 1;
+            spread -= 1;
+            index += 1;
+        }
+        cycles += 1;
+        if position_table.contains(&items) {
+            break;
+        }
+        position_table.insert(items.clone());
+        biggest_val = 0;
+        index_big_val = 0;
+        for (i, val) in items.iter().enumerate() {
+            if *val > biggest_val {
+                biggest_val = *val;
+                index_big_val = i;
+            }
+        }
+    }
+    cycles
+}
+
+pub fn memory_reallocation_part_two(input: &str) -> i64 {
+    let mut items: Vec<u64> = Vec::new();
+    let mut biggest_val = 0;
+    let mut index_big_val = 0;
+    for (index, item) in input.split_whitespace().enumerate() {
+        let val = item.parse().expect("Failed to parse input");
+        if val > biggest_val {
+            biggest_val = val;
+            index_big_val = index;
+        }
+        items.push(val);
+    }
+    let mut position_table = HashMap::new();
+    position_table.insert(items.clone(), 0);
+    let mut cycles = 0;
+    loop {
+        let mut spread = items[index_big_val];
+        items[index_big_val] = 0;
+        let mut index = index_big_val + 1;
+        while spread > 0 {
+            if index >= items.len() {
+                index = 0;
+            }
+            items[index] += 1;
+            spread -= 1;
+            index += 1;
+        }
+        cycles += 1;
+        if position_table.contains_key(&items) {
+            break cycles - position_table[&items];
+        }
+        position_table.insert(items.clone(), cycles);
+        biggest_val = 0;
+        index_big_val = 0;
+        for (i, val) in items.iter().enumerate() {
+            if *val > biggest_val {
+                biggest_val = *val;
+                index_big_val = i;
+            }
+        }
+    }
 }
 
 pub fn maze_twisty_trampolines_part_one(input: &str) -> i64 {
@@ -217,18 +314,17 @@ fn spiral_memory_part_one(start: i64) -> i64 {
 
 fn spiral_memory_part_two(num: u64) -> u64 {
     // trash tier solution
-    let LENGTH: usize = 100;
-    let CENTER = LENGTH / 2;
+    const LENGTH: usize = 100;
+    const CENTER: usize = LENGTH / 2;
     let mut grid = [[0; 100]; 100];
     grid[CENTER][CENTER] = 1;
     let mut n = 1;
     let mut i = CENTER;
     let mut j = CENTER + 1;
-    let mut sum_surroundings = 0;
-    while true {
+    loop {
         // UP N, UP N
         for _ in 0..(n * 2) - 1 {
-            sum_surroundings = {
+            let sum_surroundings = {
                 grid[i - 1][j] + grid[i - 1][j - 1] + grid[i - 1][j + 1] + grid[i][j + 1]
                     + grid[i][j - 1] + grid[i + 1][j + 1] + grid[i + 1][j]
                     + grid[i + 1][j - 1]
@@ -241,7 +337,7 @@ fn spiral_memory_part_two(num: u64) -> u64 {
         }
         // LEFT N, LEFT N
         for _ in 0..(n * 2) {
-            sum_surroundings = {
+            let sum_surroundings = {
                 grid[i - 1][j] + grid[i - 1][j - 1] + grid[i - 1][j + 1] + grid[i][j + 1]
                     + grid[i][j - 1] + grid[i + 1][j + 1] + grid[i + 1][j]
                     + grid[i + 1][j - 1]
@@ -254,7 +350,7 @@ fn spiral_memory_part_two(num: u64) -> u64 {
         }
         // DOWN N, DOWN N
         for _ in 0..(n * 2) {
-            sum_surroundings = {
+            let sum_surroundings = {
                 grid[i - 1][j] + grid[i - 1][j - 1] + grid[i - 1][j + 1] + grid[i][j + 1]
                     + grid[i][j - 1] + grid[i + 1][j + 1] + grid[i + 1][j]
                     + grid[i + 1][j - 1]
@@ -267,7 +363,7 @@ fn spiral_memory_part_two(num: u64) -> u64 {
         }
         // RIGHT N, RIGHT N
         for _ in 0..(n * 2) + 1 {
-            sum_surroundings = {
+            let sum_surroundings = {
                 grid[i - 1][j] + grid[i - 1][j - 1] + grid[i - 1][j + 1] + grid[i][j + 1]
                     + grid[i][j - 1] + grid[i + 1][j + 1] + grid[i + 1][j]
                     + grid[i + 1][j - 1]
@@ -280,7 +376,6 @@ fn spiral_memory_part_two(num: u64) -> u64 {
         }
         n += 1;
     }
-    10
 }
 
 fn ascii_to_digit(ascii: u8) -> Result<u64, &'static str> {
@@ -363,5 +458,15 @@ mod tests {
 1
 -3";
         assert_eq!(maze_twisty_trampolines_part_two(inp), 10);
+    }
+
+    #[test]
+    fn test_memory_reallocation_part_one() {
+        assert_eq!(memory_reallocation_part_one("0 2 7 0"), 5);
+    }
+
+    #[test]
+    fn test_memory_reallocation_part_two() {
+        assert_eq!(memory_reallocation_part_two("0 2 7 0"), 4);
     }
 }
