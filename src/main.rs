@@ -7,6 +7,7 @@ use std::collections::HashSet;
 use std::collections::HashMap;
 
 fn main() {
+    /*
     println!(
         "{:?}",
         inverse_captcha_part_one(include_str!("day1.in").trim_right().as_bytes())
@@ -48,7 +49,138 @@ fn main() {
     println!(   
         "{:?}",
         memory_reallocation_part_two(include_str!("day6.in").trim_right())
+    ); */
+    println!(
+        "{}",
+        recursive_circus_part_one(include_str!("day7.in").trim_right())
     );
+    println!(
+        "{}",
+        recursive_circus_part_two(include_str!("day7.in").trim_right())
+    );
+}
+
+struct Program {
+    weight: u64,
+    children: Vec<String>
+}
+
+pub fn recursive_circus_part_one(input: &str) -> String {
+    let mut programs: HashMap<&str, Program> = HashMap::new();
+    for line in input.lines() {
+        let line_elems: Vec<_> = line.split_whitespace().collect();
+        let name = line_elems[0];
+        let weight = {
+            let foo = line_elems[1];
+            let sub_foo = &foo[1..foo.len()-1];
+            sub_foo.parse().expect("Failed to parse input")
+        };
+        let mut children = Vec::new();
+        if let Some(&val) = line_elems.get(2) {
+            assert_eq!(val, "->");
+            let mut n = 3;
+            while let Some(&child) = line_elems.get(n) {
+                let sub_child = if child.bytes().rev().nth(0).unwrap() == b',' {
+                    &child[..child.len()-1]
+                } else {
+                    child
+                };
+                children.push(String::from(sub_child));
+                n += 1;
+            }
+        }
+        programs.insert(name, Program {
+            weight: weight,
+            children: children
+        });
+    }
+    let mut potential_roots: HashSet<&str> = programs.keys().map(|x| *x).collect();
+    for elem in programs.values() {
+        for child in elem.children.iter() {
+            let val = potential_roots.remove(child.as_str());
+        }
+    }
+    assert_eq!(potential_roots.len(), 1);
+    String::from(potential_roots.into_iter().nth(0).unwrap())
+}
+
+pub fn recursive_circus_part_two(input: &str) -> u64 {
+    let mut programs: HashMap<&str, Program> = HashMap::new();
+    for line in input.lines() {
+        let line_elems: Vec<_> = line.split_whitespace().collect();
+        let name = line_elems[0];
+        let weight = {
+            let foo = line_elems[1];
+            let sub_foo = &foo[1..foo.len()-1];
+            sub_foo.parse().expect("Failed to parse input")
+        };
+        let mut children = Vec::new();
+        if let Some(&val) = line_elems.get(2) {
+            assert_eq!(val, "->");
+            let mut n = 3;
+            while let Some(&child) = line_elems.get(n) {
+                let sub_child = if child.bytes().rev().nth(0).unwrap() == b',' {
+                    &child[..child.len()-1]
+                } else {
+                    child
+                };
+                children.push(String::from(sub_child));
+                n += 1;
+            }
+        }
+        programs.insert(name, Program {
+            weight: weight,
+            children: children
+        });
+    }
+    let mut potential_roots: HashSet<&str> = programs.keys().map(|x| *x).collect();
+    for elem in programs.values() {
+        for child in elem.children.iter() {
+            let val = potential_roots.remove(child.as_str());
+        }
+    }
+    assert_eq!(potential_roots.len(), 1);
+    let root = potential_roots.into_iter().nth(0).unwrap();
+    let mut to_check: HashSet<String> = programs[root].children.clone().into_iter().collect();
+    let mut last_to_check = to_check.clone();
+    let mut last_good_weight = 0;
+    loop {
+        let weights: Vec<_> = to_check.clone().into_iter().map(|child| (child.clone(), sum_weight(&child, &programs))).collect();
+        let mut good_weight = 0;
+        for ((child, weight), (other_child, other_weight)) in weights.into_iter().tuple_combinations() {
+            if weight == other_weight {
+                to_check.remove(&child);
+                to_check.remove(&other_child);
+                good_weight = weight;
+            }
+        }
+        if to_check.is_empty() {
+            break;
+        }
+        last_good_weight = good_weight;
+        last_to_check = to_check.clone();
+        to_check.clear();
+        for name in last_to_check.iter() {
+            for child in programs[name.as_str()].children.iter() {
+                to_check.insert(child.clone());
+            }
+        }
+    }
+    assert_eq!(last_to_check.len(), 1);
+    let bad_node = last_to_check.iter().nth(0).unwrap();
+    let bad_weight = programs[bad_node.as_str()].weight;
+    let children_weight = sum_weight(bad_node, &programs) - bad_weight;
+    last_good_weight - children_weight
+}
+
+fn sum_weight(node_name: &str, programs: &HashMap<&str, Program>) -> u64 {
+    let mut sum = 0;
+    let node = &programs[node_name];
+    sum += node.weight;
+    for child in node.children.iter() {
+        sum += sum_weight(child, programs);
+    }
+    sum
 }
 
 pub fn memory_reallocation_part_one(input: &str) -> i64 {
@@ -468,5 +600,41 @@ mod tests {
     #[test]
     fn test_memory_reallocation_part_two() {
         assert_eq!(memory_reallocation_part_two("0 2 7 0"), 4);
+    }
+
+    #[test]
+    fn test_recursive_circus_part_one() {
+        let input = "pbga (66)
+xhth (57)
+ebii (61)
+havc (66)
+ktlj (57)
+fwft (72) -> ktlj, cntj, xhth
+qoyq (66)
+padx (45) -> pbga, havc, qoyq
+tknk (41) -> ugml, padx, fwft
+jptl (61)
+ugml (68) -> gyxo, ebii, jptl
+gyxo (61)
+cntj (57)";
+        assert_eq!(recursive_circus_part_one(input), String::from("tknk"));
+    }
+
+    #[test]
+    fn test_recursive_circus_part_two() {
+        let input = "pbga (66)
+xhth (57)
+ebii (61)
+havc (66)
+ktlj (57)
+fwft (72) -> ktlj, cntj, xhth
+qoyq (66)
+padx (45) -> pbga, havc, qoyq
+tknk (41) -> ugml, padx, fwft
+jptl (61)
+ugml (68) -> gyxo, ebii, jptl
+gyxo (61)
+cntj (57)";
+        assert_eq!(recursive_circus_part_two(input), 60);
     }
 }
