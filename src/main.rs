@@ -58,6 +58,256 @@ fn main() {
         "{}",
         recursive_circus_part_two(include_str!("day7.in").trim_right())
     );
+    println!{
+        "{}",
+        registers_part_one(include_str!("day8.in").trim_right())
+    };
+    println!{
+        "{}",
+        registers_part_two(include_str!("day8.in").trim_right())
+    };
+}
+
+pub fn registers_part_one(input: &str) -> i64 {
+    let mut registers: HashMap<&str, i64> = HashMap::new();
+    for line in input.lines() {
+        let line: Vec<&str> = line.split_whitespace().collect();
+        assert_eq!(line[3], "if");
+        assert_eq!(line.len(), 7);
+        match line[5] {
+            "<" => {
+                if *registers.get(line[4]).unwrap_or(&0) < line[6].parse().unwrap() {
+                    let val = { *registers.get_mut(line[0]).unwrap_or(&mut 0) };
+                    match line[1] {
+                        "inc" => {
+                            registers.insert(line[0], val + line[2].parse::<i64>().unwrap());
+                        },
+                        "dec" => {
+                            registers.insert(line[0], val - line[2].parse::<i64>().unwrap());
+                        },
+                        _ => {
+                            assert!(false);
+                        }
+                    }
+                }
+            },
+            ">" => {
+                if *registers.get(line[4]).unwrap_or(&0) > line[6].parse().unwrap() {
+                    let val = { *registers.get_mut(line[0]).unwrap_or(&mut 0) };
+                    match line[1] {
+                        "inc" => {
+                            registers.insert(line[0], val + line[2].parse::<i64>().unwrap());
+                        },
+                        "dec" => {
+                            registers.insert(line[0], val - line[2].parse::<i64>().unwrap());
+                        },
+                        _ => {
+                            assert!(false);
+                        }
+                    }
+                }
+            },
+            "==" => {
+                if *registers.get(line[4]).unwrap_or(&0) == line[6].parse().unwrap() {
+                    let val = { *registers.get_mut(line[0]).unwrap_or(&mut 0) };
+                    match line[1] {
+                        "inc" => {
+                            registers.insert(line[0], val + line[2].parse::<i64>().unwrap());
+                        },
+                        "dec" => {
+                            registers.insert(line[0], val - line[2].parse::<i64>().unwrap());
+                        },
+                        _ => {
+                            assert!(false);
+                        }
+                    }
+                }
+            },
+            ">=" => {
+                if *registers.get(line[4]).unwrap_or(&0) >= line[6].parse().unwrap() {
+                    let val = { *registers.get_mut(line[0]).unwrap_or(&mut 0) };
+                    match line[1] {
+                        "inc" => {
+                            registers.insert(line[0], val + line[2].parse::<i64>().unwrap());
+                        },
+                        "dec" => {
+                            registers.insert(line[0], val - line[2].parse::<i64>().unwrap());
+                        },
+                        _ => {
+                            assert!(false);
+                        }
+                    }
+                }
+            },
+            "<=" => {
+                if *registers.get(line[4]).unwrap_or(&0) <= line[6].parse().unwrap() {
+                    let val = { *registers.get_mut(line[0]).unwrap_or(&mut 0) };
+                    match line[1] {
+                        "inc" => {
+                            registers.insert(line[0], val + line[2].parse::<i64>().unwrap());
+                        },
+                        "dec" => {
+                            registers.insert(line[0], val - line[2].parse::<i64>().unwrap());
+                        },
+                        _ => {
+                            assert!(false);
+                        }
+                    }
+                }
+            },
+            "!=" => {
+                if *registers.get(line[4]).unwrap_or(&0) != line[6].parse().unwrap() {
+                    let val = { *registers.get_mut(line[0]).unwrap_or(&mut 0) };
+                    match line[1] {
+                        "inc" => {
+                            registers.insert(line[0], val + line[2].parse::<i64>().unwrap());
+                        },
+                        "dec" => {
+                            registers.insert(line[0], val - line[2].parse::<i64>().unwrap());
+                        },
+                        _ => {
+                            assert!(false);
+                        }
+                    }
+                }
+            }
+            _ => {
+                assert!(false);
+            }
+        }
+    }
+    let max = registers.values().fold(0, |best, &value| if value > best { value } else { best });
+    max
+}
+
+pub fn registers_part_two(input: &str) -> i64 {
+    let mut registers: HashMap<&str, i64> = HashMap::new();
+    let mut all_time_max = 0;
+    for line in input.lines() {
+        let line: Vec<&str> = line.split_whitespace().collect();
+        assert_eq!(line[3], "if");
+        assert_eq!(line.len(), 7);
+        match line[5] {
+            "<" => {
+                if *registers.get(line[4]).unwrap_or(&0) < line[6].parse().unwrap() {
+                    let val = { *registers.get_mut(line[0]).unwrap_or(&mut 0) };
+                    match line[1] {
+                        "inc" => {
+                            registers.insert(line[0], val + line[2].parse::<i64>().unwrap());
+                        },
+                        "dec" => {
+                            registers.insert(line[0], val - line[2].parse::<i64>().unwrap());
+                        },
+                        _ => {
+                            assert!(false);
+                        }
+                    }
+                    if registers[line[0]] > all_time_max {
+                        all_time_max = registers[line[0]];
+                    }
+                }
+            },
+            ">" => {
+                if *registers.get(line[4]).unwrap_or(&0) > line[6].parse().unwrap() {
+                    let val = { *registers.get_mut(line[0]).unwrap_or(&mut 0) };
+                    match line[1] {
+                        "inc" => {
+                            registers.insert(line[0], val + line[2].parse::<i64>().unwrap());
+                        },
+                        "dec" => {
+                            registers.insert(line[0], val - line[2].parse::<i64>().unwrap());
+                        },
+                        _ => {
+                            assert!(false);
+                        }
+                    }
+                    if registers[line[0]] > all_time_max {
+                        all_time_max = registers[line[0]];
+                    }
+                }
+            },
+            "==" => {
+                if *registers.get(line[4]).unwrap_or(&0) == line[6].parse().unwrap() {
+                    let val = { *registers.get_mut(line[0]).unwrap_or(&mut 0) };
+                    match line[1] {
+                        "inc" => {
+                            registers.insert(line[0], val + line[2].parse::<i64>().unwrap());
+                        },
+                        "dec" => {
+                            registers.insert(line[0], val - line[2].parse::<i64>().unwrap());
+                        },
+                        _ => {
+                            assert!(false);
+                        }
+                    }
+                    if registers[line[0]] > all_time_max {
+                        all_time_max = registers[line[0]];
+                    }
+                }
+            },
+            ">=" => {
+                if *registers.get(line[4]).unwrap_or(&0) >= line[6].parse().unwrap() {
+                    let val = { *registers.get_mut(line[0]).unwrap_or(&mut 0) };
+                    match line[1] {
+                        "inc" => {
+                            registers.insert(line[0], val + line[2].parse::<i64>().unwrap());
+                        },
+                        "dec" => {
+                            registers.insert(line[0], val - line[2].parse::<i64>().unwrap());
+                        },
+                        _ => {
+                            assert!(false);
+                        }
+                    }
+                    if registers[line[0]] > all_time_max {
+                        all_time_max = registers[line[0]];
+                    }
+                }
+            },
+            "<=" => {
+                if *registers.get(line[4]).unwrap_or(&0) <= line[6].parse().unwrap() {
+                    let val = { *registers.get_mut(line[0]).unwrap_or(&mut 0) };
+                    match line[1] {
+                        "inc" => {
+                            registers.insert(line[0], val + line[2].parse::<i64>().unwrap());
+                        },
+                        "dec" => {
+                            registers.insert(line[0], val - line[2].parse::<i64>().unwrap());
+                        },
+                        _ => {
+                            assert!(false);
+                        }
+                    }
+                    if registers[line[0]] > all_time_max {
+                        all_time_max = registers[line[0]];
+                    }
+                }
+            },
+            "!=" => {
+                if *registers.get(line[4]).unwrap_or(&0) != line[6].parse().unwrap() {
+                    let val = { *registers.get_mut(line[0]).unwrap_or(&mut 0) };
+                    match line[1] {
+                        "inc" => {
+                            registers.insert(line[0], val + line[2].parse::<i64>().unwrap());
+                        },
+                        "dec" => {
+                            registers.insert(line[0], val - line[2].parse::<i64>().unwrap());
+                        },
+                        _ => {
+                            assert!(false);
+                        }
+                    }
+                    if registers[line[0]] > all_time_max {
+                        all_time_max = registers[line[0]];
+                    }
+                }
+            }
+            _ => {
+                assert!(false);
+            }
+        }
+    }
+    all_time_max
 }
 
 struct Program {
@@ -636,5 +886,23 @@ ugml (68) -> gyxo, ebii, jptl
 gyxo (61)
 cntj (57)";
         assert_eq!(recursive_circus_part_two(input), 60);
+    }
+
+    #[test]
+    fn test_registers_part_one() {
+        let input = "b inc 5 if a > 1
+a inc 1 if b < 5
+c dec -10 if a >= 1
+c inc -20 if c == 10";
+        assert_eq!(registers_part_one(input), 1);
+    }
+
+        #[test]
+    fn test_registers_part_two() {
+        let input = "b inc 5 if a > 1
+a inc 1 if b < 5
+c dec -10 if a >= 1
+c inc -20 if c == 10";
+        assert_eq!(registers_part_two(input), 10);
     }
 }
