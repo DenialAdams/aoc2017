@@ -66,6 +66,77 @@ fn main() {
         "{}",
         registers_part_two(include_str!("day8.in").trim_right())
     };
+    println!{
+        "{}",
+        stream_processing_part_one(include_str!("day9.in").trim_right())
+    }
+    println!{
+        "{}",
+        stream_processing_part_two(include_str!("day9.in").trim_right())
+    }
+}
+
+pub fn stream_processing_part_two(input: &str) -> u64 {
+    let mut score = 0;
+    let mut in_garbage = false;
+    let mut skip = false;
+    for a_char in input.chars() {
+        if skip {
+            skip = false;
+        } else if in_garbage {
+            match a_char {
+                '!' => skip = true,
+                '>' => in_garbage = false,
+                _ => {
+                    score += 1
+                    // continue
+                }
+            }
+        } else {
+            match a_char {
+                '<' => in_garbage = true,
+                '!' => skip = true,
+                _ => {
+                    // continue
+                }
+            }
+        }
+    }
+    score
+}
+
+pub fn stream_processing_part_one(input: &str) -> u64 {
+    let mut depth = 0;
+    let mut score = 0;
+    let mut in_garbage = false;
+    let mut skip = false;
+    for a_char in input.chars() {
+        if skip {
+            skip = false;
+        } else if in_garbage {
+            match a_char {
+                '!' => skip = true,
+                '>' => in_garbage = false,
+                _ => {
+                    // continue
+                }
+            }
+        } else {
+            match a_char {
+                '<' => in_garbage = true,
+                '!' => skip = true,
+                '{' => depth += 1,
+                '}' => {
+                    score += depth;
+                    depth -= 1;
+                },
+                _ => {
+                    // continue
+                }
+            }
+        }
+    }
+    score
 }
 
 pub fn registers_part_one(input: &str) -> i64 {
@@ -897,12 +968,35 @@ c inc -20 if c == 10";
         assert_eq!(registers_part_one(input), 1);
     }
 
-        #[test]
+    #[test]
     fn test_registers_part_two() {
         let input = "b inc 5 if a > 1
 a inc 1 if b < 5
 c dec -10 if a >= 1
 c inc -20 if c == 10";
         assert_eq!(registers_part_two(input), 10);
+    }
+
+    #[test]
+    fn test_stream_processing_part_one() {
+        assert_eq!(stream_processing_part_one("{}"), 1);
+        assert_eq!(stream_processing_part_one("{{{}}}"), 6);
+        assert_eq!(stream_processing_part_one("{{},{}}"), 5);
+        assert_eq!(stream_processing_part_one("{{{},{},{{}}}}"), 16);
+        assert_eq!(stream_processing_part_one("{<a>,<a>,<a>,<a>}"), 1);
+        assert_eq!(stream_processing_part_one("{{<ab>},{<ab>},{<ab>},{<ab>}}"), 9);
+        assert_eq!(stream_processing_part_one("{{<!!>},{<!!>},{<!!>},{<!!>}}"), 9);
+        assert_eq!(stream_processing_part_one("{{<a!>},{<a!>},{<a!>},{<ab>}}"), 3);
+    }
+
+    #[test]
+    fn test_stream_processing_part_two() {
+        assert_eq!(stream_processing_part_two("<>"), 0);
+        assert_eq!(stream_processing_part_two("<random characters>"), 17);
+        assert_eq!(stream_processing_part_two("<<<<>"), 3);
+        assert_eq!(stream_processing_part_two("<{!>}>"), 2);
+        assert_eq!(stream_processing_part_two("<!!>"), 0);
+        assert_eq!(stream_processing_part_two("<!!!>>"), 0);
+        assert_eq!(stream_processing_part_two("<{o\"i!a,<{i<a>"), 10);
     }
 }
